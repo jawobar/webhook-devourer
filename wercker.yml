@@ -1,0 +1,17 @@
+box: golang
+
+dev:
+  steps:
+    - script:
+      name: link to source files
+      code: |
+        export IMPORT_PATH=$GOPATH/src/bitbucket.org/jawobar
+        mkdir -p $IMPORT_PATH
+        ln -s $WERCKER_SOURCE_DIR $IMPORT_PATH/webhook-devourer
+    - internal/watch:
+        code: |
+          go get
+          go build
+          ./source -config config.yml
+        reload: true
+    - internal/shell

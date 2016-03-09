@@ -1,0 +1,10 @@
+# Available handlers: dockerhub
+# Available runners: bash
+handlers:
+  /dockerhub:
+    type: dockerhub
+    auth: true
+    runners:
+      bash:
+        command: ls
+        args: -la

@@ -30,6 +30,7 @@ build:
       name: move executable
       code: |
         mv $GOPATH/bin/webhook-devourer $WERCKER_OUTPUT_DIR/webhooks
+        strip -s $WERCKER_OUTPUT_DIR/webhooks
         ls -la $WERCKER_OUTPUT_DIR
 
 deploy:

@@ -7,6 +7,8 @@ import (
   "bitbucket.org/jawobar/webhook-devourer/runners"
 )
 
+var serverConfig *ServerConfig
+
 type AuthenticatedHandler struct {
   handler handlers.Handler
 }
@@ -22,17 +24,30 @@ func (auth AuthenticatedHandler) ServeHTTP(res http.ResponseWriter, req *http.Re
 func Start(addr string, config *ServerConfig) error {
   log.Printf("Magic happens on %s", addr)
 
-  prepareHandlers(config)
-  return http.ListenAndServe(addr, nil)
+  serverConfig = config
+  prepareHandlers()
+
+  if config.Tls.Key != "" && config.Tls.Cert != "" {
+    return http.ListenAndServeTLS(addr, config.Tls.Cert, config.Tls.Key, nil)
+  } else {
+    return http.ListenAndServe(addr, nil)
+  }
 }
 
 func authenticate(req *http.Request) bool {
   key := req.URL.Query().Get("apikey")
-  return key == "secret"
+
+  for _, k := range serverConfig.Apikeys {
+    if k == key {
+      return true
+    }
+  }
+
+  return false
 }
 
-func prepareHandlers(config *ServerConfig) {
-  for route, cfg := range config.Handlers {
+func prepareHandlers() {
+  for route, cfg := range serverConfig.Handlers {
     handler := handlers.Create(cfg.Type, prepareRunners(&cfg)...)
     if cfg.Auth {
       http.Handle(route, AuthenticatedHandler{handler})

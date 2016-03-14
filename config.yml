@@ -8,3 +8,10 @@ handlers:
       bash:
         command: ls
         args: -la
+
+tls:
+  key: server.key
+  cert: server.crt
+
+apikeys:
+  - some-api-key

@@ -10,4 +10,9 @@ type HandlerConfig struct {
 
 type ServerConfig struct {
   Handlers map[string]HandlerConfig
+  Tls struct {
+    Key string
+    Cert string
+  }
+  Apikeys []string
 }

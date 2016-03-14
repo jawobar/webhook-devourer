@@ -25,13 +25,36 @@ build:
       code: go get -v ./...
     - script:
       name: build executable
-      code: go build -o webhooks -a -v
+      code: go build -a -v
     - script:
       name: move executable
-      code: mv $GOPATH/bin/* $WERCKER_OUTPUT_DIR
+      code: |
+        mv $GOPATH/bin/webhook-devourer $WERCKER_OUTPUT_DIR/webhooks
+        ls -la $WERCKER_OUTPUT_DIR
 
 deploy:
   steps:
+    - add-to-known_hosts:
+      hostname: jawobar.eu
+    - mktemp:
+      envvar: PRIVATE_KEY_PATH
+    - create-file:
+      filename: $PRIVATE_KEY_PATH
+      content: $SSH_KEY_PRIVATE
+      overwrite: true
+      hide-from-log: true
     - script:
-      name: list files
-      code: ls -l ./
+      name: stop application
+      code: ssh -i $PRIVATE_KEY_PATH -l $USER -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no jawobar.eu sudo stop webhooks || true
+    - script:
+      name: transfer application
+      code: |
+        pwd
+        ls -la
+        scp -i $PRIVATE_KEY_PATH -o StrictHostKeyChecking=no -o UserKnownHostsFile=no webhooks $USER@jawobar.eu:/usr/local/bin
+    - script:
+      name: set application's permissions
+      code: ssh -i $PRIVATE_KEY_PATH -l $USER -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no jawobar.eu chmod 4650 /usr/local/bin/webhooks
+    - script:
+      name: start application
+      code: ssh -i $PRIVATE_KEY_PATH -l $USER -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no jawobar.eu sudo start webhooks

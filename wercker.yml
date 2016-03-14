@@ -5,9 +5,9 @@ dev:
     - script:
       name: link to source files
       code: |
-        export IMPORT_PATH=$GOPATH/src/bitbucket.org/jawobar
-        mkdir -p $IMPORT_PATH
-        ln -s $WERCKER_SOURCE_DIR $IMPORT_PATH/webhook-devourer
+        export IMPORT_PATH=$GOPATH/src/bitbucket.org/jawobar/webhook-devourer
+        mkdir -p $(dirname $IMPORT_PATH)
+        ln -s $WERCKER_SOURCE_DIR $IMPORT_PATH
     - internal/watch:
         code: |
           go get
@@ -15,3 +15,23 @@ dev:
           ./source -config config.yml
         reload: true
     - internal/shell
+
+build:
+  steps:
+    - wercker/setup-go-workspace:
+      package-dir: bitbucket.org/jawobar/webhook-devourer
+    - script:
+      name: get dependencies
+      code: go get -v ./...
+    - script:
+      name: build executable
+      code: go build -o webhooks -a -v
+    - script:
+      name: move executable
+      code: mv $GOPATH/bin/* $WERCKER_OUTPUT_DIR
+
+deploy:
+  steps:
+    - script:
+      name: list files
+      code: ls -l ./

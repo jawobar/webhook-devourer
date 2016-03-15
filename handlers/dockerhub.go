@@ -26,10 +26,10 @@ type DockerHubMessage struct {
     Name string
     Namespace string
     Owner string
-    Repo_url string `json:"repo_url"`
-    Repo_name string `json:"repo_name"`
+    RepoUrl string `json:"repo_url"`
+    RepoName string `json:"repo_name"`
     Status string
-    Star_count int `json:"star_count"`
+    StarCount int `json:"star_count"`
   }
 }
 
@@ -37,22 +37,28 @@ type DockerHubHandler struct {
   runners []runners.Runner
 }
 
-func (handler DockerHubHandler) New(runners ...runners.Runner) *DockerHubHandler {
+func NewDockerHubHandler(runners ...runners.Runner) *DockerHubHandler {
   return &DockerHubHandler{runners: runners}
 }
 
 func (handler DockerHubHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
   var message DockerHubMessage
+  var context map[string]string
 
   decoder := json.NewDecoder(req.Body)
   err := decoder.Decode(&message)
+
+  context = make(map[string]string)
+  context["$TAG$"] = message.PushData.Tag
+  context["$PUSHER$"] = message.PushData.Pusher
+  context["$REPO$"] = message.Repository.RepoName
 
   if err != nil {
     log.Print(err)
     http.Error(res, "Could not decode JSON", http.StatusBadRequest)
   } else {
     for _, runner := range handler.runners {
-      go runner.Run()
+      go runner.Run(context)
     }
   }
 }

@@ -8,7 +8,7 @@ import (
 func Create(name string, runners ...runners.Runner) Handler {
   switch name {
   case "dockerhub":
-    return DockerHubHandler{}.New(runners...)
+    return NewDockerHubHandler(runners...)
   default:
     log.Fatal("Unknown handler name: " + name)
   }

@@ -6,8 +6,8 @@ handlers:
     auth: true
     runners:
       bash:
-        command: ls
-        args: -la
+        command: echo
+        args: $PUSHER$ pushed new image to $REPO$:$TAG$
 
 tls:
   key: server.key

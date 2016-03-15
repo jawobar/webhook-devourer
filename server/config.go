@@ -1,6 +1,6 @@
 package server
 
-type RunnerConfig map[string]interface{}
+type RunnerConfig map[string]string
 
 type HandlerConfig struct {
   Type string

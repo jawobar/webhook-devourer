@@ -4,10 +4,10 @@ import (
   "log"
 )
 
-func Create(name string, params map[string]interface{}) Runner {
+func Create(name string, params map[string]string) Runner {
   switch name {
   case "bash":
-    return BashRunner{}.New(params["command"].(string), params["args"].(string))
+    return NewBashRunner(params["command"], params["args"])
   default:
     log.Fatal("Unknown handler name: " + name)
   }

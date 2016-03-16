@@ -1,5 +1,9 @@
 package server
 
+var BuildTime string
+var AppVersion string
+var CommitHash string
+
 type RunnerConfig map[string]string
 
 type HandlerConfig struct {

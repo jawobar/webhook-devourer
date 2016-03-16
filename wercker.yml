@@ -5,27 +5,34 @@ dev:
     - script:
       name: link to source files
       code: |
-        export IMPORT_PATH=$GOPATH/src/bitbucket.org/jawobar/webhook-devourer
+        export IMPORT_PATH=$GOPATH/src/$PACKAGE_DIR
         mkdir -p $(dirname $IMPORT_PATH)
         ln -s $WERCKER_SOURCE_DIR $IMPORT_PATH
     - internal/watch:
         code: |
           go get
-          go build
+          go build -ldflags " \
+            -X '$PACKAGE_DIR/server.BuildTime=$(date -u '+%Y-%m-%d %H:%M:%S')' \
+            -X '$PACKAGE_DIR/server.AppVersion=$(cat version)' \
+            -X '$PACKAGE_DIR/server.CommitHash=$WERCKER_GIT_COMMIT' "
           ./source -config config.yml
-        reload: true
-    - internal/shell
+        # reload: true
+    # - internal/shell
 
 build:
   steps:
     - wercker/setup-go-workspace:
-      package-dir: bitbucket.org/jawobar/webhook-devourer
+      package-dir: $PACKAGE_DIR
     - script:
       name: get dependencies
       code: go get -v ./...
     - script:
       name: build executable
-      code: go build -a -v
+      code: |
+        go build -a -v -ldflags " \
+          -X '$PACKAGE_DIR/server.BuildTime=$(date -u '+%Y-%m-%d %H:%M:%S')' \
+          -X '$PACKAGE_DIR/server.AppVersion=$(cat version)' \
+          -X '$PACKAGE_DIR/server.CommitHash=$WERCKER_GIT_COMMIT' "
     - script:
       name: move executable
       code: |
@@ -54,7 +61,7 @@ deploy:
         ls -la
         scp -i $PRIVATE_KEY_PATH -o StrictHostKeyChecking=no -o UserKnownHostsFile=no webhooks $USER@jawobar.eu:/usr/local/bin
     - script:
-      name: set application's permissions
+      name: set permissions
       code: ssh -i $PRIVATE_KEY_PATH -l $USER -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no jawobar.eu chmod 4650 /usr/local/bin/webhooks
     - script:
       name: start application

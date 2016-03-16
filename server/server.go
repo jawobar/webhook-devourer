@@ -1,6 +1,7 @@
 package server
 
 import (
+  "fmt"
   "log"
   "net/http"
   "bitbucket.org/jawobar/webhook-devourer/handlers"
@@ -55,6 +56,12 @@ func prepareHandlers() {
       http.Handle(route, handler)
     }
   }
+
+  http.HandleFunc("/status", func(res http.ResponseWriter, req *http.Request) {
+    fmt.Fprintln(res, "Build time:", BuildTime)
+    fmt.Fprintln(res, "App version:", AppVersion)
+    fmt.Fprintln(res, "Commit hash:", CommitHash)
+  })
 }
 
 func prepareRunners(config *HandlerConfig) []runners.Runner{

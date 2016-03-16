@@ -29,15 +29,14 @@ build:
     - script:
       name: build executable
       code: |
-        go build -a -v -ldflags " \
+        go build -a -ldflags " -s \
           -X '$PACKAGE_DIR/server.BuildTime=$(date -u '+%Y-%m-%d %H:%M:%S')' \
           -X '$PACKAGE_DIR/server.AppVersion=$(cat version)' \
           -X '$PACKAGE_DIR/server.CommitHash=$WERCKER_GIT_COMMIT' "
     - script:
       name: move executable
       code: |
-        mv $GOPATH/bin/webhook-devourer $WERCKER_OUTPUT_DIR/webhooks
-        strip -s $WERCKER_OUTPUT_DIR/webhooks
+        mv webhook-devourer $WERCKER_OUTPUT_DIR/webhooks
         ls -la $WERCKER_OUTPUT_DIR
 
 deploy:

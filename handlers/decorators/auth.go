@@ -2,11 +2,10 @@ package decorators
 
 import (
   "net/http"
-  "bitbucket.org/jawobar/webhook-devourer/handlers"
 )
 
 type AuthenticatedHandler struct {
-  Handler handlers.Handler
+  Handler http.Handler
   Apikeys []string
 }
 

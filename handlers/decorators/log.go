@@ -5,17 +5,16 @@ import (
   "log"
   "io/ioutil"
   "net/http"
-  "bitbucket.org/jawobar/webhook-devourer/handlers"
 )
 
 type LoggingHandler struct {
-  Handler handlers.Handler
+  Handler http.Handler
 }
 
 func (logger LoggingHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
   body, err := ioutil.ReadAll(req.Body)
   if err != nil {
-    log.Fatalf("ERROR: %s", err)
+    log.Fatalf("Error reading request body: %s", err)
   }
 
   log.Printf("Received %s from %s\n%s\n", req.Method, req.RemoteAddr, body)

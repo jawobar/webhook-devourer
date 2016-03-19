@@ -4,6 +4,7 @@ handlers:
   /dockerhub:
     type: dockerhub
     auth: true
+    log: true
     runners:
       bash:
         command: echo

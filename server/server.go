@@ -5,22 +5,11 @@ import (
   "log"
   "net/http"
   "bitbucket.org/jawobar/webhook-devourer/handlers"
+  "bitbucket.org/jawobar/webhook-devourer/handlers/decorators"
   "bitbucket.org/jawobar/webhook-devourer/runners"
 )
 
 var serverConfig *ServerConfig
-
-type AuthenticatedHandler struct {
-  handler handlers.Handler
-}
-
-func (auth AuthenticatedHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
-  if authenticate(req) {
-    auth.handler.ServeHTTP(res, req)
-  } else {
-    http.Error(res, "Not Authorized", http.StatusUnauthorized)
-  }
-}
 
 func Start(addr string, config *ServerConfig) error {
   log.Printf("Magic happens on %s", addr)
@@ -35,26 +24,18 @@ func Start(addr string, config *ServerConfig) error {
   }
 }
 
-func authenticate(req *http.Request) bool {
-  key := req.URL.Query().Get("apikey")
-
-  for _, k := range serverConfig.Apikeys {
-    if k == key {
-      return true
-    }
-  }
-
-  return false
-}
-
 func prepareHandlers() {
   for route, cfg := range serverConfig.Handlers {
     handler := handlers.Create(cfg.Type, prepareRunners(&cfg)...)
+
     if cfg.Auth {
-      http.Handle(route, AuthenticatedHandler{handler})
-    } else {
-      http.Handle(route, handler)
+      handler = decorators.AuthenticatedHandler{handler, serverConfig.Apikeys}
     }
+    if cfg.Log {
+      handler = decorators.LoggingHandler{handler}
+    }
+
+    http.Handle(route, handler)
   }
 
   http.HandleFunc("/status", func(res http.ResponseWriter, req *http.Request) {

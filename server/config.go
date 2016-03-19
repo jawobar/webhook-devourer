@@ -9,6 +9,7 @@ type RunnerConfig map[string]string
 type HandlerConfig struct {
   Type string
   Auth bool
+  Log bool
   Runners map[string]RunnerConfig
 }
 

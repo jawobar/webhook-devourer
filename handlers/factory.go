@@ -10,6 +10,8 @@ func Create(name string, runners ...runners.Runner) http.Handler {
   switch name {
   case "dockerhub":
     return NewDockerHubHandler(runners...)
+  case "bitbucket":
+    return NewBitbucketHandler(runners...)
   default:
     log.Fatal("Unknown handler name: " + name)
   }

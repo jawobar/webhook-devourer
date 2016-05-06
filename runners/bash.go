@@ -16,12 +16,12 @@ func NewBashRunner(command string, args string) *BashRunner {
 }
 
 func (runner *BashRunner) Run(context map[string]string) {
-  runner.command = Eval(runner.command, context)
-  runner.args = Eval(runner.args, context)
+  name := Eval(runner.command, context)
+  params := Eval(runner.args, context)
 
-  log.Println("Running script:", runner.command, runner.args)
-  args := strings.Split(runner.args, " ")
-  output, err := exec.Command(runner.command, args...).Output()
+  log.Println("Running script:", name, params)
+  args := strings.Split(params, " ")
+  output, err := exec.Command(name, args...).Output()
 
   if err != nil {
     log.Println("Error executing bash script")

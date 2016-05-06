@@ -43,15 +43,10 @@ func NewDockerHubHandler(runners ...runners.Runner) *DockerHubHandler {
 
 func (handler DockerHubHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
   var message DockerHubMessage
-  var context map[string]string
 
   decoder := json.NewDecoder(req.Body)
   err := decoder.Decode(&message)
-
-  context = make(map[string]string)
-  context["$TAG$"] = message.PushData.Tag
-  context["$PUSHER$"] = message.PushData.Pusher
-  context["$REPO$"] = message.Repository.RepoName
+  context := handler.populateContext(&message)
 
   if err != nil {
     log.Print(err)
@@ -61,4 +56,14 @@ func (handler DockerHubHandler) ServeHTTP(res http.ResponseWriter, req *http.Req
       go runner.Run(context)
     }
   }
+}
+
+func (handler DockerHubHandler) populateContext(message *DockerHubMessage) map[string]string {
+  context := make(map[string]string)
+
+  context["$TAG$"] = message.PushData.Tag
+  context["$PUSHER$"] = message.PushData.Pusher
+  context["$REPO$"] = message.Repository.RepoName
+
+  return context
 }

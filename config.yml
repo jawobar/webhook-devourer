@@ -1,4 +1,4 @@
-# Available handlers: dockerhub
+# Available handlers: dockerhub, bitbucket
 # Available runners: bash
 handlers:
   /dockerhub:
@@ -9,6 +9,14 @@ handlers:
       bash:
         command: echo
         args: $PUSHER$ pushed new image to $REPO$:$TAG$
+  /bitbucket:
+    type: bitbucket
+    auth: false
+    log: true
+    runners:
+      bash:
+        command: echo
+        args: $PUSHER$ pushed new code to $REPO$/$BRANCH$
 
 tls:
   key: server.key

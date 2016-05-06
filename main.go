@@ -19,16 +19,16 @@ func main() {
 
   yml, err := ioutil.ReadFile(*configFile)
   if err != nil {
-		log.Fatal("Error reading: " + *configFile, err)
-	}
+    log.Fatal("Error reading: " + *configFile, err)
+  }
 
   err = yaml.Unmarshal(yml, &config)
   if err != nil {
-		log.Fatal("Unmarshalling YAML: ", err)
-	}
+    log.Fatal("Unmarshalling YAML: ", err)
+  }
 
   err = server.Start(*listenAddr, &config)
   if err != nil {
-		log.Fatal("Unable to start the server: ", err)
-	}
+    log.Fatal("Unable to start the server: ", err)
+  }
 }

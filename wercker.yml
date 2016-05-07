@@ -12,7 +12,7 @@ dev:
         code: |
           go get
           go build -ldflags " \
-            -X '$PACKAGE_DIR/server.BuildTime=$(date -u '+%Y-%m-%d %H:%M:%S')' \
+            -X '$PACKAGE_DIR/server.BuildTime=$(TZ=Europe/Warsaw date '+%Y-%m-%d %H:%M:%S %Z')' \
             -X '$PACKAGE_DIR/server.AppVersion=$(cat version)' \
             -X '$PACKAGE_DIR/server.CommitHash=$WERCKER_GIT_COMMIT' "
           ./source -config config.yml
@@ -30,7 +30,7 @@ build:
       name: build executable
       code: |
         go build -a -ldflags " -s \
-          -X '$PACKAGE_DIR/server.BuildTime=$(date -u '+%Y-%m-%d %H:%M:%S')' \
+          -X '$PACKAGE_DIR/server.BuildTime=$(TZ=Europe/Warsaw date '+%Y-%m-%d %H:%M:%S %Z')' \
           -X '$PACKAGE_DIR/server.AppVersion=$(cat version)' \
           -X '$PACKAGE_DIR/server.CommitHash=$WERCKER_GIT_COMMIT' "
     - script:

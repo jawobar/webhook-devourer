@@ -39,8 +39,8 @@ func prepareHandlers() {
   }
 
   http.HandleFunc("/status", func(res http.ResponseWriter, req *http.Request) {
-    fmt.Fprintln(res, "Build time:", BuildTime)
     fmt.Fprintln(res, "App version:", AppVersion)
+    fmt.Fprintln(res, "Build time:", BuildTime)
     fmt.Fprintln(res, "Commit hash:", CommitHash)
   })
 }

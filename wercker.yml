@@ -61,7 +61,7 @@ deploy:
         scp -i $PRIVATE_KEY_PATH -o StrictHostKeyChecking=no -o UserKnownHostsFile=no webhooks $USER@jawobar.eu:/usr/local/bin
     - script:
       name: set permissions
-      code: ssh -i $PRIVATE_KEY_PATH -l $USER -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no jawobar.eu chmod 4650 /usr/local/bin/webhooks
+      code: ssh -i $PRIVATE_KEY_PATH -l $USER -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no jawobar.eu chmod 770 /usr/local/bin/webhooks
     - script:
       name: start application
       code: ssh -i $PRIVATE_KEY_PATH -l $USER -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no jawobar.eu sudo start webhooks

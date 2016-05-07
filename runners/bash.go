@@ -24,9 +24,9 @@ func (runner *BashRunner) Run(context map[string]string) {
   output, err := exec.Command(name, args...).Output()
 
   if err != nil {
-    log.Println("Error executing bash script")
-    log.Println(err)
-  } else {
+    log.Println("Error executing bash script: " + err.Error())
+  }
+  if len(output) > 0 {
     log.Print("Script output:\n" + string(output))
   }
 }

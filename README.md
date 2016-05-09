@@ -1,8 +1,8 @@
-# Webhook Devourer #
+# Webhook Devourer [![wercker status](https://app.wercker.com/status/523a0924fb03585bd2b5141526ee28b4/s/master "wercker status")](https://app.wercker.com/project/bykey/523a0924fb03585bd2b5141526ee28b4) [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md) #
 
 This is a simple and customisable HTTP(S) server ready to take action upon receiving any kind of webhook call it understands. 
 
-[![wercker status](https://app.wercker.com/status/523a0924fb03585bd2b5141526ee28b4/s/master "wercker status")](https://app.wercker.com/project/bykey/523a0924fb03585bd2b5141526ee28b4)
+
 
 ### How does it work? ###
 
